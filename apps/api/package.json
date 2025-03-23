@@ -10,6 +10,8 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "api": "file:"
+    "@types/express": "^5.0.1",
+    "api": "file:",
+    "express": "^4.21.2"
   }
 }
