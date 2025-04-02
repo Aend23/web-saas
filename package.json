@@ -22,6 +22,7 @@
     "packages/*"
   ],
   "dependencies": {
-    "dpin-uptime": "file:"
+    "dpin-uptime": "file:",
+    "jsonwebtoken": "^9.0.2"
   }
 }
