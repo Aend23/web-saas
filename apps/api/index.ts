@@ -1,23 +1,90 @@
-import express from "express";
+import express from "express"
+import { authMiddleware } from "./middleware";
+import { prismaClient } from "db/client";
+import cors from "cors";
+import { Transaction, SystemProgram, Connection } from "@solana/web3.js";
 
+
+const connection = new Connection("https://api.mainnet-beta.solana.com");
 const app = express();
 
-app.post("/api/v1/website", (req, res) => {
-  res.json({ message: "Hello, world!" });
-});
+app.use(cors());
+app.use(express.json());
 
-app.get("/api/v1/website/status", (req, res) => {
-  res.json({ message: "Website is running" });
-});
+app.post("/api/v1/website", authMiddleware, async (req, res) => {
+    const userId = req.userId!;
+    const { url } = req.body;
 
-app.get("/api/v1/websites", (req, res) => {
-  res.json({ message: "Websites" });
-}); 
+    const data = await prismaClient.website.create({
+        data: {
+            userId,
+            url
+        }
+    })
 
-app.delete("/api/v1/website/:id",   (req, res) => {
-  res.json({ message: "Website deleted" });
-});
+    res.json({
+        id: data.id
+    })
+})
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-});
+app.get("/api/v1/website/status", authMiddleware, async (req, res) => {
+    const websiteId = req.query.websiteId! as unknown as string;
+    const userId = req.userId;
+
+    const data = await prismaClient.website.findFirst({
+        where: {
+            id: websiteId,
+            userId,
+            disabled: false
+        },
+        include: {
+            ticks: true
+        }
+    })
+
+    res.json(data)
+
+})
+
+app.get("/api/v1/websites", authMiddleware, async (req, res) => {
+    const userId = req.userId!;
+
+    const websites = await prismaClient.website.findMany({
+        where: {
+            userId,
+            disabled: false
+        },
+        include: {
+            ticks: true
+        }
+    })
+
+    res.json({
+        websites
+    })
+})
+
+app.delete("/api/v1/website/", authMiddleware, async (req, res) => {
+    const websiteId = req.body.websiteId;
+    const userId = req.userId!;
+
+    await prismaClient.website.update({
+        where: {
+            id: websiteId,
+            userId
+        },
+        data: {
+            disabled: true
+        }
+    })
+
+    res.json({
+        message: "Deleted website successfully"
+    })
+})
+
+app.post("/api/v1/payout/:validatorId", async (req, res) => {
+   
+})
+
+app.listen(8080);
