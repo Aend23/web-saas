@@ -1,28 +1,18 @@
 {
-  "name": "dpin-uptime",
-  "private": true,
-  "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
-  },
+  "name": "validator",
+  "module": "index.ts",
+  "type": "module",
   "devDependencies": {
-    "prettier": "^3.5.3",
-    "turbo": "^2.4.4",
-    "typescript": "5.8.2"
+    "@types/bun": "latest",
+    "common": "*"
   },
-  "engines": {
-    "node": ">=18"
+  "peerDependencies": {
+    "typescript": "^5.0.0"
   },
-  "packageManager": "bun@1.2.5",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "dependencies": {
-    "dpin-uptime": "file:",
-    "jsonwebtoken": "^9.0.2"
+    "@solana/kit": "^2.1.0",
+    "@solana/web3.js": "^1.98.0",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1"
   }
 }
